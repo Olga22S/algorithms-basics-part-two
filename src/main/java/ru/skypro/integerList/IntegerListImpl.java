@@ -1,7 +1,6 @@
 package ru.skypro.integerList;
 
 import ru.skypro.exception.AbsentItemException;
-import ru.skypro.exception.FullStorageException;
 import ru.skypro.exception.IndexOutsideException;
 import ru.skypro.exception.NullItemException;
 
@@ -24,7 +23,7 @@ public class IntegerListImpl implements IntegerList {
             throw new NullItemException("Item is null!");
         }
         if (count == storage.length) {
-            throw new FullStorageException("Storage if full!");
+            grow();
         }
         storage[count++] = item;
         return item;
@@ -80,7 +79,7 @@ public class IntegerListImpl implements IntegerList {
     @Override
     public boolean contains(Integer item) {
         Integer[] copiedStorage = Arrays.copyOf(storage, count);
-        sortInsertion(copiedStorage);
+        quickSort(copiedStorage, 0, copiedStorage.length - 1);
         return binarySearch(copiedStorage, item);
     }
 
@@ -146,16 +145,36 @@ public class IntegerListImpl implements IntegerList {
         return Arrays.copyOf(storage, count);
     }
 
-    private void sortInsertion(Integer[] arr) {
-        for (int i = 1; i < arr.length; i++) {
-            int temp = arr[i];
-            int j = i;
-            while (j > 0 && arr[j - 1] >= temp) {
-                arr[j] = arr[j - 1];
-                j--;
-            }
-            arr[j] = temp;
+    private void grow() {
+        storage = Arrays.copyOf(storage, (int) (storage.length * 1.5));
+    }
+
+    public static void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
         }
+    }
+
+    private static int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
+            }
+        }
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] arr, int left, int right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
     }
 
     public boolean binarySearch(Integer[] arr, int element) {
