@@ -1,7 +1,7 @@
 package ru.skypro.integerList;
 
-import ru.skypro.exception.AbsentItemException;
-import ru.skypro.exception.IndexOutsideException;
+import ru.skypro.exception.ItemNotFoundException;
+import ru.skypro.exception.InvalidItemException;
 import ru.skypro.exception.NullItemException;
 
 import java.util.Arrays;
@@ -53,7 +53,7 @@ public class IntegerListImpl implements IntegerList {
     public Integer remove(Integer item) {
         int index = indexOf(item);
         if (index == -1) {
-            throw new AbsentItemException("This item is absent!");
+            throw new ItemNotFoundException("This item is absent!");
         }
         return remove(index);
     }
@@ -199,7 +199,7 @@ public class IntegerListImpl implements IntegerList {
 
     private void validateIndex(int index) {
         if (index >= size || index < 0) {
-            throw new IndexOutsideException("Index outside of storage!");
+            throw new InvalidItemException("Index outside of storage!");
         }
     }
 }
